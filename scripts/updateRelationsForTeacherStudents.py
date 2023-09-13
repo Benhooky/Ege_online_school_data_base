@@ -2,6 +2,7 @@
 import mysql.connector
 import random
 from itertools import cycle
+from dbconfig import db_config
 
 
 def update_relations():
@@ -9,12 +10,7 @@ def update_relations():
     Update the student-teacher relationships in the database.
     """
     # Establish a connection to the database
-    db_connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="egor21412SFAW",
-        database="ege_online_school"
-    )
+    db_connection = mysql.connector.connect(**db_config)
     cursor = db_connection.cursor()
 
     # Retrieve all student IDs from the 'students' table

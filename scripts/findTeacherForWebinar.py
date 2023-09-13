@@ -2,26 +2,24 @@
 import random
 import mysql.connector
 
+from dbconfig import db_config
+
 
 def generate_and_insert_data():
-    # Параметры подключения к базе данных
-    db_config = {
-        "host": "localhost",
-        "user": "root",
-        "password": "egor21412SFAW",
-        "database": "ege_online_school"
-    }
+    """
+    Generates and inserts data into the database.
+    """
 
-    # Установка соединения с базой данных
+    # Establish a connection to the database
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
 
-    # SQL query to select all webinar IDs
+    # Select all webinar IDs
     sql = "SELECT webinar_id FROM webinars;"
     cursor.execute(sql)
     webinar_ids = cursor.fetchall()
 
-    # SQL query to select all senior teacher IDs
+    # Select all senior teacher IDs
     sql = "SELECT senior_teacher_id FROM seniorteachers;"
     cursor.execute(sql)
     senior_teacher_ids = cursor.fetchall()

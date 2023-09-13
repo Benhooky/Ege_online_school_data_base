@@ -1,55 +1,52 @@
 import argparse
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker
-from transliterate import translit
 import random
-import itertools
 import mysql.connector
+from dbconfig import db_config
 
 
 def generate_and_insert_data(total_students):
-    # Параметры подключения к базе данных
-    # Параметры подключения к базе данных
-    db_config = {
-        "host": "localhost",
-        "user": "root",
-        "password": "egor21412SFAW",
-        "database": "ege_online_school"
-    }
+    """
+    Generate and insert homework results for a given number of students.
 
-    # Установка соединения с базой данных
+    Args:
+        total_students (int): The number of students for whom to generate and insert homework results.
+    """
+    # Connect to the database
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
 
-    # Generate random student IDs
+    # Select random student IDs from the students table
     sql_query = "SELECT student_id FROM students ORDER BY RAND() LIMIT %s;"
     cursor.execute(sql_query, (total_students,))
     student_ids = [row[0] for row in cursor.fetchall()]
 
-    # Prepare the INSERT statement and values
+    # Prepare the SQL statement for inserting homework results
     sql = "INSERT INTO homeworkresults (student_id, homework_id, score) VALUES (%s, %s, %s)"
     values = []
+
+    # Generate and insert homework results for each student
     for student_id in student_ids:
-        # Generate random homework ID
+        # Select a random homework ID
         sql_query = "SELECT homework_id FROM homework ORDER BY RAND() LIMIT 1;"
         cursor.execute(sql_query)
         homework_id = cursor.fetchone()[0]
 
-        # Generate random score for the homework
+        # Get the maximum points for the selected homework
         sql_query = "SELECT max_points FROM homework WHERE homework_id = %s;"
         cursor.execute(sql_query, (homework_id,))
         max_points = cursor.fetchone()[0]
+
+        # Generate a random score between 0 and the maximum points
         score = random.randint(0, max_points)
 
+        # Add the student ID, homework ID, and score to the values list
         values.append((student_id, homework_id, score))
 
-    # Execute the bulk INSERT
+    # Insert the generated values into the homeworkresults table
     cursor.executemany(sql, values)
-
-    # Commit the transaction
     conn.commit()
 
-    # Завершение и сохранение изменений
+    # Close the cursor and database connection
     cursor.close()
     conn.close()
 

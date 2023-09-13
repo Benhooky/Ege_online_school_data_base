@@ -1,22 +1,24 @@
 import mysql.connector
 from itertools import cycle
+from dbconfig import db_config
 
 
 def update_relations():
+    """
+    Update the relationship between junior and senior teachers in the database.
+    """
+
     # Establish a connection to the database
-    db_connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="egor21412SFAW",
-        database="ege_online_school"
-    )
+    db_connection = mysql.connector.connect(**db_config)
 
     # Create a cursor object to execute SQL queries
     cursor = db_connection.cursor()
 
     # Count the total number of distinct subjects
     cursor.execute(
-        "SELECT COUNT(DISTINCT subject_id) AS total_subjects FROM subjects"
+        """
+        SELECT COUNT(DISTINCT subject_id) AS total_subjects FROM subjects
+        """
     )
     amount_subjects = cursor.fetchone()[0]
 
@@ -36,7 +38,9 @@ def update_relations():
 
         # Retrieve senior teacher IDs for the same subject
         cursor.execute(
-            "SELECT senior_teacher_id FROM seniorteachers WHERE subject_id = %s",
+            """
+            SELECT senior_teacher_id FROM seniorteachers WHERE subject_id = %s
+            """,
             (subject_id,)
         )
         senior_teacher_ids = cursor.fetchall()
@@ -47,7 +51,11 @@ def update_relations():
         # Assign senior teacher IDs to junior teacher IDs
         for row in junior_teacher_ids:
             senior_teacher_id = next(senior_cycle)
-            sql = "UPDATE teacherrelationship SET senior_teacher_id = %s WHERE junior_teacher_id = %s"
+            sql = """
+                UPDATE teacherrelationship
+                SET senior_teacher_id = %s
+                WHERE junior_teacher_id = %s
+            """
             values = (senior_teacher_id[0], row[0])
             cursor.execute(sql, values)
 

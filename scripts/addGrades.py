@@ -1,45 +1,49 @@
 import argparse
 import random
 import mysql.connector
+from dbconfig import db_config
 
 
 def generate_and_insert_data(total_students):
-    # Параметры подключения к базе данных
-    db_config = {
-        "host": "localhost",
-        "user": "root",
-        "password": "egor21412SFAW",
-        "database": "ege_online_school"
-    }
+    """
+    Generate and insert random data into the grades table.
 
-    # Установка соединения с базой данных
+    Args:
+        total_students (int): The total number of students.
+
+    Returns:
+        None
+    """
+
+    # Establish database connection
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
 
+    # Loop through total_students
     for i in range(total_students):
         # Generate random student ID
-        sql_query = "SELECT student_id FROM students ORDER BY RAND() LIMIT 1;"
-        cursor.execute(sql_query)
+        cursor.execute(
+            "SELECT student_id FROM students ORDER BY RAND() LIMIT 1;")
         student_id = cursor.fetchone()[0]
 
         # Generate random webinar ID
-        sql_query = "SELECT webinar_id FROM webinars ORDER BY RAND() LIMIT 1;"
-        cursor.execute(sql_query)
+        cursor.execute(
+            "SELECT webinar_id FROM webinars ORDER BY RAND() LIMIT 1;")
         webinar_id = cursor.fetchone()[0]
 
         # Generate random grade value
         grade_value = random.randint(1, 5)
 
-        # SQL-запрос для добавления данных в таблицу
+        # Insert data into grades table
         sql = "INSERT INTO grades (student_id, webinar_id, grade_value) VALUES (%s, %s, %s)"
         values = (student_id, webinar_id, grade_value)
         cursor.execute(sql, values)
 
-        # Выполнение коммита каждые N записей (например, каждые 1000)
+        # Commit every 1000 records
         if i % 1000 == 0:
             conn.commit()
 
-    # Завершение и сохранение изменений
+    # Commit and close connection
     conn.commit()
     cursor.close()
     conn.close()
