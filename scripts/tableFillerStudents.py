@@ -74,16 +74,11 @@ def generate_and_insert_data(total_students):
     phones = [
         f"+7{random.randint(100, 999):03d}{random.randint(100, 999):03d}{random.randint(10, 99):02d}{random.randint(10, 99):02d}" for _ in range(total_students)]
 
-    # Generate random teacher IDs
-    sql_query = "SELECT teacher_id FROM teachers ORDER BY RAND() LIMIT %s;"
-    cursor.execute(sql_query, (total_students,))
-    teacher_ids = [row[0] for row in cursor.fetchall()]
-
     # Iterate over the lists and insert data into the table
-    for first_name, last_name, birthdate, email, phone, teacher_id in zip(random_first_names, random_last_names, birthdates, emails, phones, teacher_ids):
-        sql = "INSERT INTO students (student_name, birthdate, email, phone, teacher_id) VALUES (%s, %s, %s, %s, %s)"
+    for first_name, last_name, birthdate, email, phone in zip(random_first_names, random_last_names, birthdates, emails, phones):
+        sql = "INSERT INTO students (student_name, birthdate, email, phone) VALUES (%s, %s, %s, %s)"
         values = (f"{first_name} {last_name}",
-                  birthdate, email, phone, teacher_id)
+                  birthdate, email, phone)
         cursor.execute(sql, values)
 
     # Завершение и сохранение изменений
