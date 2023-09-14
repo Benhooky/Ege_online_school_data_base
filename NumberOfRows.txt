@@ -1,0 +1,12 @@
+Table Name	Row Count
+grades	66440
+homework	250
+homeworkresults	200030
+lessons	69957
+seniorteachers	15124
+student_teacher_relationship	404874
+students	133995
+subjects	5
+teacherrelationship	120516
+teachers	119570
+webinars	153
