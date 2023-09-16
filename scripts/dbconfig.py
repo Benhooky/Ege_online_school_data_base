@@ -1,8 +1,8 @@
 db_config = {
-    "host": "localhost",
-    "user": "root",
-    "password": "egor21412SFAW",
-    "database": "ege_online_school"
+    "host": "",
+    "user": "",
+    "password": "",
+    "database": ""
 }
 male_names = [
     "Александр", "Андрей", "Артем", "Вадим", "Валентин", "Валерий", "Василий", "Виктор", "Владимир", "Вячеслав",
